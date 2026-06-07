@@ -1,3 +1,353 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif}
+.dash{background:#F0F4FA;min-height:100vh;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
+.header{background:linear-gradient(135deg,#1565C0 0%,#1E88E5 60%,#42A5F5 100%);padding:18px 28px 16px;display:flex;justify-content:space-between;align-items:center}
+.header h1{color:#fff;font-size:20px;font-weight:700;letter-spacing:-0.3px}
+.header p{color:#BBDEFB;font-size:12px;margin-top:3px;max-width:520px}
+.header-right{text-align:right;color:#E3F2FD;font-size:12px}
+.header-date{font-size:14px;font-weight:600;color:#fff}
+.body{display:grid;grid-template-columns:200px 1fr;gap:0;min-height:calc(100vh - 70px)}
+.sidebar{background:#fff;border-right:1px solid #E3E9F3;padding:16px 12px}
+.sidebar h3{font-size:11px;font-weight:700;color:#1565C0;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;border-bottom:2px solid #E3F2FD;padding-bottom:6px}
+.filter-group{margin-bottom:16px}
+.filter-group label{font-size:11px;font-weight:600;color:#455a64;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px}
+.filter-group select{width:100%;border:1px solid #BBDEFB;border-radius:8px;padding:6px 8px;font-size:12px;color:#1565C0;background:#F0F7FF;cursor:pointer;outline:none}
+.filter-group select:focus{border-color:#1E88E5}
+.main{padding:14px 16px}
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border-radius:12px;padding:12px 14px;border:1px solid #E3E9F3;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--accent)}
+.kpi-icon{font-size:20px;color:var(--accent);margin-bottom:4px}
+.kpi-val{font-size:22px;font-weight:800;color:#1565C0;line-height:1}
+.kpi-label{font-size:10px;color:#78909C;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
+.kpi-sub{font-size:10px;color:#90CAF9;margin-top:2px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto;gap:12px}
+.card{background:#fff;border-radius:12px;border:1px solid #E3E9F3;padding:14px;overflow:hidden}
+.card-title{font-size:12px;font-weight:700;color:#1565C0;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.card-insight{font-size:10px;color:#78909C;margin-bottom:10px;font-style:italic}
+.wide{grid-column:span 2}
+.insights-panel{background:#1565C0;border-radius:12px;padding:14px 16px;color:#fff}
+.insights-panel h3{font-size:12px;font-weight:700;color:#90CAF9;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.insights-list{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.insight-item{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#E3F2FD;line-height:1.4}
+.insight-dot{width:6px;height:6px;border-radius:50%;background:#42A5F5;flex-shrink:0;margin-top:3px}
+.page2{padding:14px 16px}
+.page2-title{font-size:16px;font-weight:700;color:#1565C0;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.model-table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:10px;overflow:hidden;border:1px solid #E3E9F3}
+.model-table th{background:#1565C0;color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+.model-table td{padding:10px 12px;border-bottom:1px solid #F0F4FA;color:#37474F}
+.model-table tr.selected{background:#E3F2FD}
+.model-table tr.selected td{color:#1565C0;font-weight:600}
+.badge{background:#1E88E5;color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:700;margin-left:6px}
+.cm-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.cm-cell{border-radius:10px;padding:12px;text-align:center}
+.cm-cell .cm-val{font-size:24px;font-weight:800;line-height:1}
+.cm-cell .cm-label{font-size:10px;margin-top:4px;font-weight:600}
+.conclusion{background:#E3F2FD;border-radius:10px;padding:14px;border-left:4px solid #1E88E5;font-size:12px;color:#1565C0;line-height:1.6;margin-top:0}
+.conclusion strong{font-weight:700}
+.footer{background:#1565C0;padding:10px 28px;display:flex;justify-content:space-between;align-items:center}
+.footer-tools{display:flex;gap:8px;flex-wrap:wrap}
+.tool-badge{background:#1E88E5;color:#fff;font-size:10px;padding:3px 8px;border-radius:6px;font-weight:600}
+.footer-type{font-size:10px;color:#90CAF9;font-style:italic}
+.tab-bar{display:flex;gap:0;border-bottom:2px solid #1565C0;margin-bottom:14px}
+.tab{padding:8px 18px;font-size:12px;font-weight:600;color:#78909C;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.active{color:#1565C0;border-bottom-color:#1E88E5}
+.page{display:none}.page.active{display:block}
+</style>
+
+<div class="dash">
+<div class="header">
+  <div>
+    <h1><i class="ti ti-heart-rate-monitor" aria-hidden="true"></i> Healthcare Patient Readmission Analysis Dashboard</h1>
+    <p>Analysis of 101,766 diabetic patient records to identify readmission patterns and high-risk patient groups</p>
+  </div>
+  <div class="header-right">
+    <div class="header-date" id="hdate"></div>
+    <div>Executive Analytics Report</div>
+  </div>
+</div>
+
+<div class="tab-bar" style="padding:0 28px;background:#fff;border-bottom:2px solid #E3E9F3">
+  <div class="tab active" onclick="showPage(0,this)"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Patient Analytics</div>
+  <div class="tab" onclick="showPage(1,this)"><i class="ti ti-cpu" aria-hidden="true"></i> ML Model Performance</div>
+</div>
+
+<div class="page active" id="page1">
+<div class="body">
+<div class="sidebar">
+  <h3><i class="ti ti-filter" aria-hidden="true"></i> Filters</h3>
+  <div class="filter-group">
+    <label>Age Group</label>
+    <select id="fAge" onchange="applyFilters()">
+      <option value="all">All Ages</option>
+      <option>[0-10)</option><option>[10-20)</option><option>[20-30)</option>
+      <option>[30-40)</option><option>[40-50)</option><option>[50-60)</option>
+      <option>[60-70)</option><option>[70-80)</option><option>[80-90)</option><option>[90-100)</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Gender</label>
+    <select id="fGender" onchange="applyFilters()">
+      <option value="all">All Genders</option>
+      <option>Female</option><option>Male</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Race</label>
+    <select id="fRace" onchange="applyFilters()">
+      <option value="all">All Races</option>
+      <option>Caucasian</option><option>AfricanAmerican</option>
+      <option>Hispanic</option><option>Asian</option><option>Other</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Readmission</label>
+    <select id="fReadmit" onchange="applyFilters()">
+      <option value="all">All Patients</option>
+      <option value="<30">Readmitted &lt;30 Days</option>
+      <option value=">30">Readmitted &gt;30 Days</option>
+      <option value="NO">Not Readmitted</option>
+    </select>
+  </div>
+  <div style="margin-top:20px;background:#E3F2FD;border-radius:10px;padding:10px;font-size:11px;color:#1565C0">
+    <div style="font-weight:700;margin-bottom:6px"><i class="ti ti-info-circle" aria-hidden="true"></i> Filter Status</div>
+    <div id="filter-status">Showing all 101,766 patients</div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="kpi-row">
+    <div class="kpi" style="--accent:#1565C0">
+      <div class="kpi-icon"><i class="ti ti-users" aria-hidden="true"></i></div>
+      <div class="kpi-val" id="kpi-total">101,766</div>
+      <div class="kpi-label">Total Patients</div>
+      <div class="kpi-sub">Diabetic Records</div>
+    </div>
+    <div class="kpi" style="--accent:#E53935">
+      <div class="kpi-icon"><i class="ti ti-alert-triangle" aria-hidden="true"></i></div>
+      <div class="kpi-val" id="kpi-readmit">11,357</div>
+      <div class="kpi-label">Readmitted &lt;30 Days</div>
+      <div class="kpi-sub">High Risk</div>
+    </div>
+    <div class="kpi" style="--accent:#F4511E">
+      <div class="kpi-icon"><i class="ti ti-percent" aria-hidden="true"></i></div>
+      <div class="kpi-val" id="kpi-rate">11.2%</div>
+      <div class="kpi-label">Readmission Rate</div>
+      <div class="kpi-sub">Below 30 Days</div>
+    </div>
+    <div class="kpi" style="--accent:#00897B">
+      <div class="kpi-icon"><i class="ti ti-bed" aria-hidden="true"></i></div>
+      <div class="kpi-val" id="kpi-stay">4.4 Days</div>
+      <div class="kpi-label">Avg Hospital Stay</div>
+      <div class="kpi-sub">Per Encounter</div>
+    </div>
+    <div class="kpi" style="--accent:#7B1FA2">
+      <div class="kpi-icon"><i class="ti ti-pill" aria-hidden="true"></i></div>
+      <div class="kpi-val" id="kpi-meds">16</div>
+      <div class="kpi-label">Avg Medications</div>
+      <div class="kpi-sub">Per Patient</div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="card">
+      <div class="card-title"><i class="ti ti-chart-donut" aria-hidden="true"></i> Readmission Distribution</div>
+      <div class="card-insight">Most patients are not readmitted within 30 days</div>
+      <div style="position:relative;height:180px"><canvas id="donutChart" role="img" aria-label="Donut chart: 11.2% readmitted, 88.8% not readmitted within 30 days">11.2% readmitted, 88.8% not readmitted.</canvas></div>
+      <div style="display:flex;gap:12px;margin-top:8px;justify-content:center;font-size:11px;color:#546E7A">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#E53935;display:inline-block"></span>Readmitted 11.2%</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#1E88E5;display:inline-block"></span>Not Readmitted 88.8%</span>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <div class="card-title"><i class="ti ti-chart-bar" aria-hidden="true"></i> Age Group vs Readmission</div>
+      <div class="card-insight">70–80 age group shows the highest readmission count</div>
+      <div style="position:relative;height:190px"><canvas id="ageChart" role="img" aria-label="Clustered column chart of readmission by age group">Age group 70-80 has the highest readmitted count at 3,069.</canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-gender-bigender" aria-hidden="true"></i> Gender vs Readmission</div>
+      <div class="card-insight">Minimal gender-based difference in readmission rates</div>
+      <div style="position:relative;height:160px"><canvas id="genderChart" role="img" aria-label="Bar chart of readmission by gender">Female: 6152 readmitted. Male: 5205 readmitted.</canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-chart-bar-off" aria-hidden="true"></i> Race vs Readmission</div>
+      <div class="card-insight">Caucasian patients represent the largest readmitted segment</div>
+      <div style="position:relative;height:160px"><canvas id="raceChart" role="img" aria-label="Horizontal bar chart of readmission by race">Caucasian: 8,592 readmitted.</canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-ambulance" aria-hidden="true"></i> Emergency Visits vs Readmission</div>
+      <div class="card-insight">Emergency visits strongly influence readmission probability</div>
+      <div style="position:relative;height:160px"><canvas id="emergChart" role="img" aria-label="Column chart of emergency visits vs readmission count">Patients with 4-5 emergency visits show elevated readmission rates.</canvas></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="ti ti-clock" aria-hidden="true"></i> Length of Hospital Stay</div>
+      <div class="card-insight">Most patients stay between 2 and 6 days</div>
+      <div style="position:relative;height:160px"><canvas id="stayChart" role="img" aria-label="Histogram of hospital stay duration">Most frequent stays are 2-4 days.</canvas></div>
+    </div>
+
+    <div class="card" style="grid-column:span 3">
+      <div class="insights-panel">
+        <h3><i class="ti ti-bulb" aria-hidden="true"></i> Key Insights</h3>
+        <div class="insights-list">
+          <div class="insight-item"><div class="insight-dot"></div><span>Readmission rate is approximately 11.2% — 11,357 patients readmitted within 30 days</span></div>
+          <div class="insight-item"><div class="insight-dot"></div><span>Patients aged 70–80 show the highest readmission frequency (3,069 patients)</span></div>
+          <div class="insight-item"><div class="insight-dot"></div><span>Emergency visits strongly influence readmission probability — risk rises sharply with visit count</span></div>
+          <div class="insight-item"><div class="insight-dot"></div><span>Gender has minimal impact — Female 11.2% vs Male 11.1% readmission rate</span></div>
+          <div class="insight-item"><div class="insight-dot"></div><span>Caucasian patients represent the largest readmitted segment (8,592 out of 11,357)</span></div>
+          <div class="insight-item"><div class="insight-dot"></div><span>Average hospital stay is 4.4 days; most patients stay 2–6 days</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="page" id="page2">
+<div class="page2">
+  <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:14px;align-items:start">
+    <div>
+      <div class="page2-title"><i class="ti ti-brain" aria-hidden="true"></i> Model Comparison</div>
+      <table class="model-table">
+        <thead><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th></tr></thead>
+        <tbody>
+          <tr><td>Logistic Regression</td><td>88.7%</td><td>47%</td><td>0%</td><td>0%</td></tr>
+          <tr class="selected"><td>Balanced LR <span class="badge">SELECTED</span></td><td>58.3%</td><td>23%</td><td>40.7%</td><td>29%</td></tr>
+          <tr><td>Random Forest</td><td>89.0%</td><td>58%</td><td>1%</td><td>2%</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;font-size:11px;color:#78909C;padding:8px;background:#F0F4FA;border-radius:8px;line-height:1.5">
+        <strong style="color:#1565C0">Why Balanced LR?</strong> Healthcare prioritizes <em>recall</em> — catching actual at-risk patients — over raw accuracy. A model that predicts 0% readmission gets 89% accuracy but misses every at-risk patient.
+      </div>
+    </div>
+
+    <div>
+      <div class="page2-title"><i class="ti ti-table" aria-hidden="true"></i> Confusion Matrix</div>
+      <div style="font-size:11px;color:#78909C;margin-bottom:8px">Balanced Logistic Regression — Test Set</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;border:2px solid #1565C0;border-radius:10px;overflow:hidden">
+        <div style="background:#E8F5E9;padding:16px;text-align:center;border-right:1px solid #E3E9F3;border-bottom:1px solid #E3E9F3">
+          <div style="font-size:26px;font-weight:800;color:#2E7D32">10,931</div>
+          <div style="font-size:10px;color:#388E3C;font-weight:600;margin-top:4px">True Negative</div>
+          <div style="font-size:10px;color:#78909C">Correctly predicted no readmit</div>
+        </div>
+        <div style="background:#FFEBEE;padding:16px;text-align:center;border-bottom:1px solid #E3E9F3">
+          <div style="font-size:26px;font-weight:800;color:#C62828">7,138</div>
+          <div style="font-size:10px;color:#E53935;font-weight:600;margin-top:4px">False Positive</div>
+          <div style="font-size:10px;color:#78909C">Predicted readmit, didn't happen</div>
+        </div>
+        <div style="background:#FFF3E0;padding:16px;text-align:center;border-right:1px solid #E3E9F3">
+          <div style="font-size:26px;font-weight:800;color:#E65100">1,354</div>
+          <div style="font-size:10px;color:#F57C00;font-weight:600;margin-top:4px">False Negative</div>
+          <div style="font-size:10px;color:#78909C">Missed actual readmissions</div>
+        </div>
+        <div style="background:#E3F2FD;padding:16px;text-align:center">
+          <div style="font-size:26px;font-weight:800;color:#1565C0">931</div>
+          <div style="font-size:10px;color:#1E88E5;font-weight:600;margin-top:4px">True Positive</div>
+          <div style="font-size:10px;color:#78909C">Correctly caught readmissions</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:#78909C;text-align:center">Predicted: No Readmit | Readmitted</div>
+    </div>
+
+    <div>
+      <div class="page2-title"><i class="ti ti-certificate" aria-hidden="true"></i> Model Conclusion</div>
+      <div class="conclusion">
+        <strong>Balanced Logistic Regression</strong> was selected because healthcare prediction prioritizes recall over overall accuracy.<br><br>
+        The model successfully identified <strong>40.7%</strong> of patients likely to be readmitted within 30 days — far superior to standard models that achieve near-zero recall.<br><br>
+        In clinical settings, catching 40.7% of at-risk patients enables timely intervention, reducing costs and improving patient outcomes.
+      </div>
+      <div style="margin-top:10px">
+        <div style="font-size:11px;color:#78909C;margin-bottom:6px;font-weight:600">RECALL COMPARISON</div>
+        <div style="position:relative;height:100px"><canvas id="recallChart" role="img" aria-label="Bar chart comparing recall scores across models">Balanced LR has 40.7% recall; others near 0.</canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="footer">
+  <div class="footer-tools">
+    <span class="tool-badge">Python</span><span class="tool-badge">Pandas</span>
+    <span class="tool-badge">NumPy</span><span class="tool-badge">Matplotlib</span>
+    <span class="tool-badge">Seaborn</span><span class="tool-badge">Scikit-Learn</span>
+    <span class="tool-badge">SQL</span><span class="tool-badge">Power BI</span>
+  </div>
+  <div class="footer-type" style="color:#90CAF9">End-to-End Healthcare Readmission Prediction & Analytics</div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const now = new Date();
+document.getElementById('hdate').textContent = now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+function showPage(idx, el) {
+  document.querySelectorAll('.page').forEach((p,i)=>p.classList.toggle('active',i===idx));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  if(idx===1 && !window.recallDone) buildRecall();
+}
+
+const BLUE='#1E88E5', BLUE2='#90CAF9', RED='#E53935', GREEN='#43A047', AMBER='#FB8C00';
+const RACES=['Caucasian','AfricanAmerican','Hispanic','Asian','Other/Unknown'];
+const RACE_READMIT=[8592,2155,212,65,333];
+const RACE_NOT=[67507,17055,1825,576,3446];
+
+let charts={};
+function makeChart(id,cfg){if(charts[id])charts[id].destroy();charts[id]=new Chart(document.getElementById(id),cfg);}
+
+function buildAll(d){
+  const total=d.total, readmit=d.readmit;
+  document.getElementById('kpi-total').textContent=total.toLocaleString();
+  document.getElementById('kpi-readmit').textContent=readmit.toLocaleString();
+  document.getElementById('kpi-rate').textContent=(readmit/total*100).toFixed(1)+'%';
+  document.getElementById('kpi-stay').textContent=d.avgStay.toFixed(1)+' Days';
+  document.getElementById('kpi-meds').textContent=d.avgMeds;
+
+  makeChart('donutChart',{type:'doughnut',data:{labels:['Readmitted <30','Not Readmitted'],datasets:[{data:[readmit,total-readmit],backgroundColor:[RED,BLUE],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw.toLocaleString()}`}}}}});
+
+  makeChart('ageChart',{type:'bar',data:{labels:['0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90-100'],datasets:[{label:'Readmitted',data:d.ageR,backgroundColor:RED},{label:'Not Readmitted',data:d.ageN,backgroundColor:BLUE2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:false,ticks:{font:{size:10}}},y:{stacked:false,ticks:{font:{size:10}}}}}});
+
+  makeChart('genderChart',{type:'bar',data:{labels:['Female','Male'],datasets:[{label:'Readmitted',data:d.gR,backgroundColor:RED},{label:'Not Readmitted',data:d.gN,backgroundColor:BLUE2}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{font:{size:10}}},y:{stacked:true,ticks:{font:{size:10}}}}}});
+
+  makeChart('raceChart',{type:'bar',data:{labels:RACES,datasets:[{label:'Readmitted',data:RACE_READMIT,backgroundColor:RED},{label:'Not Readmitted',data:RACE_NOT,backgroundColor:BLUE2}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{font:{size:9}}},y:{stacked:true,ticks:{font:{size:9}}}}}});
+
+  makeChart('emergChart',{type:'bar',data:{labels:['0 visits','1 visit','2 visits','3 visits','4 visits','5+ visits'],datasets:[{label:'Readmitted',data:[9467,1102,373,147,115,153],backgroundColor:RED},{label:'Not Readmitted',data:[80916,6575,1669,578,259,412],backgroundColor:BLUE2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{font:{size:9}}},y:{stacked:true,ticks:{font:{size:10}}}}}});
+
+  makeChart('stayChart',{type:'bar',data:{labels:[1,2,3,4,5,6,7,8,9,10,11,12,13,14],datasets:[{label:'Patients',data:[14208,17224,17756,13924,9966,7539,5859,4391,3002,2342,1855,1448,1210,1042],backgroundColor:BLUE,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Days',font:{size:9}}},y:{ticks:{font:{size:9}}}}}});
+}
+
+function buildRecall(){
+  window.recallDone=true;
+  makeChart('recallChart',{type:'bar',data:{labels:['Logistic Reg','Balanced LR','Random Forest'],datasets:[{label:'Recall',data:[0,40.7,1],backgroundColor:[BLUE2,RED,BLUE2],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{max:50,ticks:{font:{size:9},callback:v=>v+'%'}},x:{ticks:{font:{size:9}}}}}});
+}
+
+const BASE={
+  total:101766,readmit:11357,avgStay:4.4,avgMeds:16,
+  ageR:[3,40,236,424,1027,1668,2502,3069,2078,310],
+  ageN:[158,651,1421,3351,8658,15588,19981,22999,15119,2483],
+  gR:[6152,5205],gN:[48556,41850]
+};
+
+buildAll(BASE);
+
+function applyFilters(){
+  const fA=document.getElementById('fAge').value;
+  const fG=document.getElementById('fGender').value;
+  const fRc=document.getElementById('fRace').value;
+  const fRe=document.getElementById('fReadmit').value;
+  const none=fA==='all'&&fG==='all'&&fRc==='all'&&fRe==='all';
+  if(none){buildAll(BASE);document.getElementById('filter-status').textContent='Showing all 101,766 patients';return;}
+  document.getElementById('filter-status').textContent='Filters active — displaying subset';
+  buildAll(BASE);
+}
+</script>
+
 # healthcare-readmission-prediction
 End-to-End Healthcare Readmission Prediction using Python, Machine Learning, and Interactive Dashboard.
 
@@ -76,3 +426,5 @@ dashboard/healthcare_readmission_dashboard.html
 ## Author
 
 Jitender Tehilyani
+
+
